@@ -1,5 +1,6 @@
 package com.thoughtworks.androidtrain.androidassignment.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,7 +18,7 @@ import com.thoughtworks.androidtrain.androidassignment.ui.screens.DiscoverScreen
 
 
 @Composable
-fun AppContent() {
+fun AppContent(context: Context) {
 
     val navController = rememberNavController()
     val navigationActions = remember(navController) { NavigationActions(navController) }
@@ -25,6 +26,7 @@ fun AppContent() {
     val selectedDestination = navBackStackEntry?.destination?.route ?: Route.CHAT
     Column {
         AppNavHost(
+            context = context,
             navController = navController,
             modifier = Modifier.weight(1f),
         )
@@ -38,6 +40,7 @@ fun AppContent() {
 
 @Composable
 fun AppNavHost(
+    context: Context,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -47,7 +50,7 @@ fun AppNavHost(
         startDestination = Route.DISCOVER,
     ) {
         composable(Route.DISCOVER) {
-            DiscoverScreen()
+            DiscoverScreen(context)
         }
         composable(Route.CHAT) {
             // chat screen

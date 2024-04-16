@@ -1,7 +1,10 @@
 package com.thoughtworks.androidtrain.androidassignment.ui.screens
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,29 +26,37 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.thoughtworks.androidtrain.androidassignment.R
+import com.thoughtworks.androidtrain.androidassignment.ui.activities.MomentActivity
 
+
+private const val MOMENTS = "Moments"
+private const val CHANNELS = "Channels"
+private const val LIVE = "Live"
+private const val SCAN = "Scan"
+private const val LISTEN = "Listen"
 
 @Composable
-fun DiscoverScreen() {
+fun DiscoverScreen(context: Context) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Column (modifier = Modifier.padding(vertical = 2.dp)) {
-            BoxItem(icon = R.drawable.moments, title = "Moments")
+            BoxItem(context = context, icon = R.drawable.moments, title = MOMENTS)
         }
         Column (modifier = Modifier.padding(vertical = 2.dp)) {
-            BoxItem(icon = R.drawable.channels, title = "Channels")
-            BoxItem(icon = R.drawable.live, title = "Live")
+            BoxItem(context = context, icon = R.drawable.channels, title = CHANNELS)
+            BoxItem(context = context, icon = R.drawable.live, title = LIVE)
         }
         Column (modifier = Modifier.padding(vertical = 2.dp)) {
-            BoxItem(icon = R.drawable.scan, title = "Scan")
-            BoxItem(icon = R.drawable.listen, title = "Listen")
+            BoxItem(context = context, icon = R.drawable.scan, title = SCAN)
+            BoxItem(context = context, icon = R.drawable.listen, title = LISTEN)
         }
     }
 }
 
 @Composable
 private fun BoxItem(
+    context: Context,
     icon: Int,
     title: String
 ) {
@@ -54,6 +65,11 @@ private fun BoxItem(
             .background(Color.LightGray)
             .height(60.dp)
             .fillMaxWidth()
+            .clickable {
+                if (title == MOMENTS) {
+                    context.startActivity(Intent(context, MomentActivity::class.java))
+                }
+            },
     ) {
         Row(modifier = Modifier.fillMaxHeight()) {
             Image(
