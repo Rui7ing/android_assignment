@@ -90,9 +90,7 @@ fun BottomNavigationBar(
                     )
                 },
                 label = {
-                    Text(
-                        text = stringResource(id = destination.contentDescription)
-                    )
+                    Text(text = stringResource(id = destination.contentDescription))
                 }
             )
         }
