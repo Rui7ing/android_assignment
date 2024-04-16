@@ -52,10 +52,14 @@ android {
 
 dependencies {
 
+    //database
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx.v225)
     kapt(libs.androidx.room.compiler)
     kapt(libs.androidx.room.ktx)
+
+    //async image
+    implementation(libs.coil.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
