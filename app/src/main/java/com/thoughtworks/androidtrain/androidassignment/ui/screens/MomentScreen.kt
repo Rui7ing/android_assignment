@@ -2,6 +2,7 @@ package com.thoughtworks.androidtrain.androidassignment.ui.screens
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,8 +38,52 @@ fun MomentScreen(
     Column(
         modifier = Modifier.verticalScroll(state = ScrollState(1), enabled = true)
     ) {
-        tweets?.forEach { TweetItem(tweet = it) }
-        BottomItem()
+        UserTitleItem(user)
+        TweetsItem(tweets)
+    }
+}
+
+@Composable
+private fun TweetsItem(tweets: List<Tweet>?) {
+    if (tweets?.isEmpty() == true) {
+        return
+    }
+    tweets?.forEach { TweetItem(tweet = it) }
+    BottomItem()
+}
+
+@Composable
+private fun UserTitleItem(user: User?) {
+    if (user == null) {
+        return
+    }
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(400.dp)) {
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(370.dp),
+            contentScale = ContentScale.Crop,
+            model = user.profileImage,
+            contentDescription = user.id
+        )
+        Row (modifier = Modifier.align(Alignment.BottomEnd)){
+            Text(
+                modifier = Modifier.align(Alignment.CenterVertically),
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                text = user.nick,
+                color = Color.White
+            )
+            AsyncImage(
+                modifier = Modifier
+                    .padding(all = 5.dp)
+                    .size(100.dp),
+                model = user.avatar,
+                contentDescription = user.id
+            )
+        }
     }
 }
 

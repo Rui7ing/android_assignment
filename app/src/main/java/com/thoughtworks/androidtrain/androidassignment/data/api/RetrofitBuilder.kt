@@ -15,7 +15,7 @@ object RetrofitBuilder {
         .create(ITweetApi::class.java)
 
     val retrofitUser: IUserApi = Retrofit.Builder()
-        .baseUrl(TWEET_URL)
+        .baseUrl(User_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         .create(IUserApi::class.java)
