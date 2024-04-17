@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -101,6 +103,7 @@ private fun TweetsItem(tweets: List<Tweet>?, user: User) {
 fun TweetItem(tweet: Tweet, user: User) {
 
     val likeFlag = remember { mutableStateOf(false) }
+    val addCommentFlag = remember { mutableStateOf(false) }
 
     Row {
         AsyncImage(
@@ -126,13 +129,11 @@ fun TweetItem(tweet: Tweet, user: User) {
                 color = Color.Black
             )
             ImageItem(tweet.images)
-            Row(
-                modifier = Modifier.align(Alignment.End)
-            ) {
-                ButtonsRow(likeFlag)
+            Row(modifier = Modifier.align(Alignment.End)) {
+                ButtonsRow(likeFlag, addCommentFlag)
             }
-
             LikeRowItem(likeFlag, user)
+            CommentListItem(addCommentFlag, user)
         }
     }
 }
@@ -155,7 +156,7 @@ private fun ImageItem(images: List<Image>?) {
 }
 
 @Composable
-private fun ButtonsRow(likeFlag: MutableState<Boolean>) {
+private fun ButtonsRow(likeFlag: MutableState<Boolean>, addCommentFlag: MutableState<Boolean>) {
     val openFlag = remember { mutableStateOf(false) }
     var heartRid by remember { mutableIntStateOf(R.drawable.heart) }
 
@@ -184,6 +185,7 @@ private fun ButtonsRow(likeFlag: MutableState<Boolean>) {
             modifier = Modifier.padding(2.dp),
             onClick = {
                 openFlag.value = false
+                addCommentFlag.value = true
             }
         ) {
             Image(
@@ -215,7 +217,6 @@ private fun ButtonsRow(likeFlag: MutableState<Boolean>) {
     }
 }
 
-
 @Composable
 private fun LikeRowItem(likeFlag: MutableState<Boolean>, user: User) {
     if (!likeFlag.value) {
@@ -233,6 +234,48 @@ private fun LikeRowItem(likeFlag: MutableState<Boolean>, user: User) {
             modifier = Modifier.align(Alignment.CenterVertically),
             text = user.nick
         )
+    }
+}
+
+
+@Composable
+private fun CommentListItem(
+    openTextField: MutableState<Boolean>,
+    user: User
+) {
+    val commentList = remember { mutableListOf<String>() }
+    commentList.forEach {
+        Text(
+            modifier = Modifier
+                .padding(2.dp)
+                .fillMaxWidth(),
+            text = it
+        )
+    }
+
+    if (!openTextField.value) {
+        return
+    }
+
+    var text by remember { mutableStateOf(TextFieldValue("")) }
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 5.dp)) {
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = text, onValueChange = { nextText -> text = nextText })
+        Row(modifier = Modifier.align(Alignment.End)) {
+            Button(
+                modifier = Modifier.padding(2.dp),
+                onClick = {
+                    commentList.add(user.nick + ": " + text.text)
+                    openTextField.value = false
+                }) { Text(text = "save") }
+            Button(
+                modifier = Modifier.padding(2.dp),
+                onClick = { openTextField.value = false }
+            ) { Text(text = "cancel") }
+        }
     }
 }
 
