@@ -16,6 +16,7 @@ gson = "2.10.1"
 roomKtx = "2.6.1"
 roomKtxVersion = "2.2.5"
 coilCompose = "2.0.0"
+runtimeLivedata = "1.6.5"
 
 
 [libraries]
@@ -23,6 +24,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtxVersion" }
 androidx-room-ktx-v225 = { module = "androidx.room:room-ktx", version.ref = "roomKtxVersion" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomKtxVersion" }
+androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

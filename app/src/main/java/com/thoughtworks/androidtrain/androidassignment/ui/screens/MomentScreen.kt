@@ -25,16 +25,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.thoughtworks.androidtrain.androidassignment.data.dao.Tweet
+import com.thoughtworks.androidtrain.androidassignment.data.dao.User
 import com.thoughtworks.androidtrain.model.dao.Image
 
 @Composable
 fun MomentScreen(
-    tweets: List<Tweet>,
+    tweets: List<Tweet>?,
+    user: User?,
 ) {
     Column(
         modifier = Modifier.verticalScroll(state = ScrollState(1), enabled = true)
     ) {
-        tweets.forEach { TweetItem(tweet = it) }
+        tweets?.forEach { TweetItem(tweet = it) }
         BottomItem()
     }
 }

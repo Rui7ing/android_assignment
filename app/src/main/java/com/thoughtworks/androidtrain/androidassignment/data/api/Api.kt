@@ -15,10 +15,10 @@ object Api {
         } else { emptyList() }
     }
 
-    suspend fun fetchUsers(): List<User> {
+    suspend fun fetchUsers(): User? {
         return if (retrofitUser.fetchUsers().isSuccessful) {
-            retrofitUser.fetchUsers().body() ?: emptyList()
-        } else { emptyList() }
+            retrofitUser.fetchUsers().body()
+        } else { null }
     }
 }
 
@@ -29,5 +29,5 @@ interface ITweetApi {
 
 interface IUserApi {
     @GET("user.json")
-    abstract fun fetchUsers(): Response<List<User>>
+    suspend fun fetchUsers(): Response<User>
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.thoughtworks.androidtrain.androidassignment.data.dao.Tweet
+import com.thoughtworks.androidtrain.androidassignment.data.dao.User
 import com.thoughtworks.androidtrain.androidassignment.data.repository.TweetRepository
 import com.thoughtworks.androidtrain.androidassignment.data.repository.UserRepository
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ class MomentViewModel(
 ) : AndroidViewModel(application) {
 
     var tweets = MutableLiveData<List<Tweet>>()
+    var user = MutableLiveData<User?>()
 
     fun fetchTweets(): MutableLiveData<List<Tweet>> {
         return tweets
@@ -23,8 +25,11 @@ class MomentViewModel(
 
     fun pullData() {
         viewModelScope.launch {
-            val data = tweetRepository.saveFromRemote()
-            tweets.postValue(data)
+            val tweetList = tweetRepository.saveFromRemote()
+            tweets.postValue(tweetList)
+
+            val userInfo = userRepository.saveFromRemote()
+            user.postValue(userInfo)
         }
     }
 }

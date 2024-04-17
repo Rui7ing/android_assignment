@@ -3,6 +3,7 @@ package com.thoughtworks.androidtrain.androidassignment.ui.activities
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.livedata.observeAsState
 import com.thoughtworks.androidtrain.androidassignment.data.repository.ApplicationDatabase
 import com.thoughtworks.androidtrain.androidassignment.data.repository.TweetRepository
 import com.thoughtworks.androidtrain.androidassignment.data.repository.UserRepository
@@ -28,12 +29,12 @@ class MomentActivity : ComponentActivity() {
     }
 
     private fun init() {
-        momentViewModel.pullData()
-        momentViewModel.tweets.observe(this) { tweets ->
-            setContent {
-                AndroidAssignmentTheme {
-                    MomentScreen(tweets = tweets)
-                }
+        setContent {
+            AndroidAssignmentTheme {
+                momentViewModel.pullData()
+                val tweets = momentViewModel.tweets.observeAsState().value
+                val user = momentViewModel.user.observeAsState().value
+                MomentScreen(tweets = tweets, user)
             }
         }
     }
