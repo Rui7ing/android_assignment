@@ -1,5 +1,6 @@
 package com.thoughtworks.androidtrain.androidassignment.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,21 +12,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.thoughtworks.androidtrain.androidassignment.R
 import com.thoughtworks.androidtrain.androidassignment.data.dao.Tweet
 import com.thoughtworks.androidtrain.androidassignment.data.dao.User
 import com.thoughtworks.androidtrain.model.dao.Image
@@ -35,31 +43,24 @@ fun MomentScreen(
     tweets: List<Tweet>?,
     user: User?,
 ) {
+    if (user == null) {
+        return
+    }
     Column(
         modifier = Modifier.verticalScroll(state = ScrollState(1), enabled = true)
     ) {
         UserTitleItem(user)
-        TweetsItem(tweets)
+        TweetsItem(tweets, user)
     }
 }
 
 @Composable
-private fun TweetsItem(tweets: List<Tweet>?) {
-    if (tweets?.isEmpty() == true) {
-        return
-    }
-    tweets?.forEach { TweetItem(tweet = it) }
-    BottomItem()
-}
-
-@Composable
-private fun UserTitleItem(user: User?) {
-    if (user == null) {
-        return
-    }
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(400.dp)) {
+private fun UserTitleItem(user: User) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(400.dp)
+    ) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
@@ -68,7 +69,7 @@ private fun UserTitleItem(user: User?) {
             model = user.profileImage,
             contentDescription = user.id
         )
-        Row (modifier = Modifier.align(Alignment.BottomEnd)){
+        Row(modifier = Modifier.align(Alignment.BottomEnd)) {
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 fontSize = 20.sp,
@@ -88,7 +89,19 @@ private fun UserTitleItem(user: User?) {
 }
 
 @Composable
-fun TweetItem(tweet: Tweet) {
+private fun TweetsItem(tweets: List<Tweet>?, user: User) {
+    if (tweets?.isEmpty() == true) {
+        return
+    }
+    tweets?.forEach { TweetItem(tweet = it, user = user) }
+    BottomItem()
+}
+
+@Composable
+fun TweetItem(tweet: Tweet, user: User) {
+
+    val likeFlag = remember { mutableStateOf(false) }
+
     Row {
         AsyncImage(
             modifier = Modifier
@@ -113,24 +126,19 @@ fun TweetItem(tweet: Tweet) {
                 color = Color.Black
             )
             ImageItem(tweet.images)
-            Button(
-                modifier = Modifier
-                    .height(40.dp)
-                    .width(70.dp)
-                    .padding(5.dp)
-                    .align(Alignment.End),
-                onClick = { /*TODO*/ }
+            Row(
+                modifier = Modifier.align(Alignment.End)
             ) {
-                // 暂用这个icon
-                Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = "")
+                ButtonsRow(likeFlag)
             }
+
+            LikeRowItem(likeFlag, user)
         }
     }
 }
 
-
 @Composable
-fun ImageItem(images: List<Image>?) {
+private fun ImageItem(images: List<Image>?) {
     Row {
         images?.forEach {
             AsyncImage(
@@ -147,7 +155,89 @@ fun ImageItem(images: List<Image>?) {
 }
 
 @Composable
-fun BottomItem() {
+private fun ButtonsRow(likeFlag: MutableState<Boolean>) {
+    val openFlag = remember { mutableStateOf(false) }
+    var heartRid by remember { mutableIntStateOf(R.drawable.heart) }
+
+    if (openFlag.value) {
+        Button(
+            modifier = Modifier.padding(2.dp),
+            onClick = {
+                heartRid =
+                    if (heartRid == R.drawable.heart) R.drawable.heart_fill else R.drawable.heart
+                likeFlag.value = !likeFlag.value
+            }
+        ) {
+            Image(
+                modifier = Modifier
+                    .height(20.dp)
+                    .padding(horizontal = 2.dp),
+                imageVector = ImageVector.vectorResource(heartRid),
+                contentDescription = ""
+            )
+            Text(
+                modifier = Modifier.padding(horizontal = 2.dp),
+                text = "Cancel"
+            )
+        }
+        Button(
+            modifier = Modifier.padding(2.dp),
+            onClick = {
+                openFlag.value = false
+            }
+        ) {
+            Image(
+                modifier = Modifier
+                    .height(20.dp)
+                    .padding(horizontal = 2.dp),
+                imageVector = ImageVector.vectorResource(R.drawable.comment),
+                contentDescription = ""
+            )
+            Text(
+                modifier = Modifier.padding(horizontal = 2.dp),
+                text = "Comment"
+            )
+        }
+    }
+
+
+    Button(
+        modifier = Modifier
+            .height(40.dp)
+            .width(70.dp)
+            .padding(5.dp),
+        onClick = { openFlag.value = !openFlag.value }
+    ) {
+        Icon(
+            imageVector = ImageVector.vectorResource(R.drawable.icon_two_point),
+            contentDescription = ""
+        )
+    }
+}
+
+
+@Composable
+private fun LikeRowItem(likeFlag: MutableState<Boolean>, user: User) {
+    if (!likeFlag.value) {
+        return
+    }
+    Row {
+        Image(
+            modifier = Modifier
+                .height(20.dp)
+                .padding(horizontal = 2.dp),
+            imageVector = ImageVector.vectorResource(R.drawable.heart),
+            contentDescription = ""
+        )
+        Text(
+            modifier = Modifier.align(Alignment.CenterVertically),
+            text = user.nick
+        )
+    }
+}
+
+@Composable
+private fun BottomItem() {
 
     Text(
         modifier = Modifier
