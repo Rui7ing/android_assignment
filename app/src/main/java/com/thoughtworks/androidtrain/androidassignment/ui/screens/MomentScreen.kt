@@ -11,7 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -34,16 +39,21 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.thoughtworks.androidtrain.androidassignment.R
 import com.thoughtworks.androidtrain.androidassignment.data.dao.Tweet
 import com.thoughtworks.androidtrain.androidassignment.data.dao.User
+import com.thoughtworks.androidtrain.androidassignment.ui.viewModel.MomentViewModel
 import com.thoughtworks.androidtrain.model.dao.Image
 
 @Composable
 fun MomentScreen(
     tweets: List<Tweet>?,
     user: User?,
+    viewModel: MomentViewModel,
+    owner: LifecycleOwner
 ) {
     if (user == null) {
         return
@@ -51,17 +61,23 @@ fun MomentScreen(
     Column(
         modifier = Modifier.verticalScroll(state = ScrollState(1), enabled = true)
     ) {
-        UserTitleItem(user)
+        UserTitleItem(user, viewModel, owner)
         TweetsItem(tweets, user)
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun UserTitleItem(user: User) {
+private fun UserTitleItem(user: User, viewModel: MomentViewModel, owner: LifecycleOwner) {
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val pullRefreshState = rememberPullRefreshState(isRefreshing, { viewModel.refresh(owner) })
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(400.dp)
+            .pullRefresh(pullRefreshState)
+            .verticalScroll(rememberScrollState())
     ) {
         AsyncImage(
             modifier = Modifier
@@ -84,9 +100,14 @@ private fun UserTitleItem(user: User) {
                     .padding(all = 5.dp)
                     .size(100.dp),
                 model = user.avatar,
-                contentDescription = user.id
+                contentDescription = user.id,
             )
         }
+        PullRefreshIndicator(
+            refreshing = isRefreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
     }
 }
 

@@ -55,12 +55,16 @@ dependencies {
     //database
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx.v225)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     kapt(libs.androidx.room.compiler)
     kapt(libs.androidx.room.ktx)
 
     //async image
     implementation(libs.coil.compose)
     implementation(libs.androidx.runtime.livedata)
+
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation("androidx.compose.material:material:1.6.0")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

@@ -34,7 +34,7 @@ class MomentActivity : ComponentActivity() {
                 momentViewModel.pullData()
                 val tweets = momentViewModel.tweets.observeAsState().value
                 val user = momentViewModel.user.observeAsState().value
-                MomentScreen(tweets = tweets, user)
+                MomentScreen(tweets = tweets, user, momentViewModel, this)
             }
         }
     }
